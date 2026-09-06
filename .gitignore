@@ -73,4 +73,7 @@ dkms.conf
 # build folder 
 build/
 
+# java for example
+*.class
+
 # End of https://www.toptal.com/developers/gitignore/api/c,linux
