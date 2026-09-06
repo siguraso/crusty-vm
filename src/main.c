@@ -1,7 +1,25 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include "class_file/class_file.h"
 
-int main() {
-    printf("hello world\n");
+int main(int argc, char** argv) {
+    if (argc != 2) {
+        printf("Please provide a path to a valid *.class file:" 
+            "\n ./cava-sunday-vm <.class filepath>");
+        
+        return 1;
+    }
+
+    if (argv[1]) {
+        class_file_t* class_file = create_class_file(argv[1]);
+
+        // temp
+        free(class_file);
+    } else {
+        printf("Problem reading arguments.");
+        
+        return 3;
+    }
 
     return 0;
 }
