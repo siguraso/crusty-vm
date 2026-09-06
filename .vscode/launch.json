@@ -6,7 +6,7 @@
       "type": "cppdbg",
       "request": "launch",
       "program": "${workspaceFolder}/build/cava-sunday-vm",
-      "args": [],
+      "args": ["${workspaceFolder}/java_example/example.class"],
       "stopAtEntry": false,
       "cwd": "${workspaceFolder}",
       "environment": [],
