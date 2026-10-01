@@ -40,12 +40,38 @@ typedef struct {
     };
 } constant_pool_entry_t;
 
+
+
+// typedef struct {
+//     char* name;
+//     char* descriptor;
+//     uint8_t* bytecode;
+//     uint32_t bytecode_length;
+// } method_t;
+
+// typedef struct {
+//     uint16_t access_flags;
+//     uint16_t name_index;
+//     uint16_t descriptor_index;
+
+//     uint16_t attributes_count;
+//     attribute_info_t* attributes;
+// } method_info_t;
+
 typedef struct {
-    char* name;
-    char* descriptor;
-    uint8_t* bytecode;
-    uint32_t bytecode_length;
-} method_t;
+    uint16_t name_index;
+    uint32_t length;
+    uint8_t* info;
+} attribute_info_t;
+
+typedef struct {
+    uint16_t access_flags;
+    uint16_t name_index;
+    uint16_t descriptor_index;
+    uint16_t attributes_count;
+    attribute_info_t* attributes;
+    
+} field_info_t;
 
 // main data struct
 typedef struct {
@@ -60,11 +86,11 @@ typedef struct {
     uint16_t this_class;
     uint16_t super_class;
 
-    // uint16_t interfaces_count;
-    // uint16_t* interfaces;
+    uint16_t interfaces_count;
+    uint16_t* interfaces;
 
-    // uint16_t fields_count;
-    // field_info_t* fields;
+    uint16_t fields_count;
+    field_info_t* fields;
 
     // uint16_t methods_count;
     // method_info_t* methods;

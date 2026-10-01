@@ -93,6 +93,55 @@ int read_constant_pool_entries(constant_pool_entry_t* constant_pool_entries,
     return 1;
 }
 
+uint16_t* read_interfaces(const uint8_t* buffer, size_t* offset, uint16_t interface_count) {
+    uint16_t* interfaces = malloc(interface_count *sizeof(uint16_t));
+    
+    for (int i = 0; i < interface_count; i++) {
+        interfaces[i] = read_u2(buffer, offset);
+    }
+
+    return interfaces;
+} 
+
+field_info_t* read_field_info(const uint8_t* buffer, size_t* offset, uint16_t field_count) {
+    field_info_t* fields = malloc(sizeof(field_info_t) * field_count);
+
+   for (uint16_t index = 0; index < field_count; index++) {
+        fields[index].access_flags = read_u2(buffer, offset);
+        fields[index].name_index = read_u2(buffer, offset);
+        fields[index].descriptor_index = read_u2(buffer, offset);
+        fields[index].attributes_count = read_u2(buffer, offset);
+
+
+        if (fields[index].attributes_count > 0) {
+            fields[index].attributes = malloc(sizeof(attribute_info_t)* (fields[index].attributes_count));
+            // haha jindex 
+            for (uint16_t jindex = 0; jindex < fields[index].attributes_count; jindex++) {
+                attribute_info_t* current = &fields[index].attributes[jindex]; 
+
+                current->name_index = read_u2(buffer, offset);
+                current->length = read_u4(buffer, offset);
+
+                
+                if (current->length > 0) {
+                
+                    current->info = malloc(sizeof(uint8_t)*current->length);
+                    // haha kindex
+                    for (uint32_t kindex = 0; kindex < current->length; kindex++) {
+                        current->info[kindex] = read_u1(buffer, offset); 
+                    }
+                } else {
+                    current->info = NULL;
+                }
+            }
+        } else {
+            fields[index].attributes = NULL;
+        }
+    }
+
+    return fields;
+}
+
 class_data_t* read_class_file(const char* file_path) {
     FILE* file_stream = fopen(file_path, "rb");
 
@@ -142,6 +191,12 @@ class_data_t* read_class_file(const char* file_path) {
     uint16_t access_flags = read_u2(buffer, &offset);
     uint16_t this_class = read_u2(buffer, &offset);
     uint16_t super_class = read_u2(buffer, &offset);
+    uint16_t interface_count = read_u2(buffer, &offset);
+
+    uint16_t* interfaces = read_interfaces(buffer, &offset, interface_count);
+    
+    uint16_t fields_count = read_u2(buffer, &offset);
+    field_info_t* field_info = read_field_info(buffer, &offset, fields_count);
 
     free(buffer);
 
@@ -155,7 +210,10 @@ class_data_t* read_class_file(const char* file_path) {
     class_file->access_flags = access_flags;
     class_file->this_class = this_class;
     class_file->super_class = super_class;
-
+    class_file->interfaces_count = interface_count;
+    class_file->interfaces = interfaces;
+    class_file->fields_count = fields_count;
+    class_file->fields = field_info;
     // debug print
     printf("Class file created successfully:\n");
     printf("Magic: 0x%X\n", class_file->magic);
