@@ -11,7 +11,7 @@ int main(int argc, char** argv) {
     }
 
     if (argv[1]) {
-        class_data_t* class_file = create_class_file(argv[1]);
+        class_data_t* class_file = read_class_file(argv[1]);
 
         if (class_file) {
             // temp'

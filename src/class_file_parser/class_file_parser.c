@@ -93,7 +93,7 @@ int read_constant_pool_entries(constant_pool_entry_t* constant_pool_entries,
     return 1;
 }
 
-class_data_t* create_class_file(const char* file_path) {
+class_data_t* read_class_file(const char* file_path) {
     FILE* file_stream = fopen(file_path, "rb");
 
     if (!file_stream) {

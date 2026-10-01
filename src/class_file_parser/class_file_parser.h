@@ -72,6 +72,6 @@ typedef struct {
     // attribute_info_t* attributes;
 } class_data_t;
 
-class_data_t* create_class_file(const char* file_path);
+class_data_t* read_class_file(const char* file_path);
 
 #endif // CLASS_FILE_H
