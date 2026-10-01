@@ -1,7 +1,7 @@
 #pragma once
 
-#ifndef CLASS_FILE_H
-#define CLASS_FILE_H
+#ifndef CLASS_FILE_PARSER_H
+#define CLASS_FILE_PARSER_H
 
 #include <stdint.h>
 
@@ -74,4 +74,4 @@ typedef struct {
 
 class_data_t* read_class_file(const char* file_path);
 
-#endif // CLASS_FILE_H
+#endif // CLASS_FILE_PARSER_H
