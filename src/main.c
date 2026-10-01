@@ -1,12 +1,12 @@
+#include "class_file/class_file.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include "class_file/class_file.h"
 
 int main(int argc, char** argv) {
     if (argc != 2) {
-        printf("Please provide a path to a valid *.class file:" 
-            "\n ./cava-sunday-vm <.class filepath>");
-        
+        printf("Please provide a path to a valid *.class file:"
+               "\n ./crusty-vm <.class filepath>");
+
         return 1;
     }
 
@@ -17,7 +17,7 @@ int main(int argc, char** argv) {
         free(class_file);
     } else {
         printf("Problem reading arguments.");
-        
+
         return 3;
     }
 

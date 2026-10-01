@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.10)
 
-project(cava-sunday-vm C)
+project(crutsy-vm C)
 
 set(CMAKE_C_STANDARD 11)
 
@@ -17,4 +17,4 @@ set(SOURCES
     src/class_file/class_file.c
 )
 
-add_executable(cava-sunday-vm ${SOURCES})
+add_executable(crusty-vm ${SOURCES})

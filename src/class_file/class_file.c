@@ -1,6 +1,6 @@
 #include "class_file.h"
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 class_file_t* create_class_file(const char* file_path) {
     FILE* file_stream = fopen(file_path, "rb");
@@ -20,13 +20,14 @@ class_file_t* create_class_file(const char* file_path) {
 
     printf("buffer[0]: %x\n", buffer[0]);
 
-    if (buffer[0] == 0xCA && buffer[1] == 0xFE && buffer[2] == 0xBA && buffer[3] == 0xBE) {
+    if (buffer[0] == 0xCA && buffer[1] == 0xFE && buffer[2] == 0xBA &&
+        buffer[3] == 0xBE) {
         printf("found cafebabe :3\n");
     } else {
         printf("not a valid class file :(\n");
     }
 
-    class_file_t* class_file = malloc(sizeof(class_file_t)); 
+    class_file_t* class_file = malloc(sizeof(class_file_t));
 
     // fill the struct with the data from the buffer
 
