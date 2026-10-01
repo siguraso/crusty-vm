@@ -5,13 +5,73 @@
 
 #include <stdint.h>
 
-typedef struct {
-    uint32_t magic;
-    uint32_t minor_version;
-    uint32_t major_version;
-    uint32_t constant_pool_count;
-} class_file_t;
+// structs to define methods and their names
 
-class_file_t* create_class_file(const char* file_path);
+typedef struct {
+    char* id;
+    char* name;
+    char* descriptor;
+    char* type;
+} method_t;
+
+typedef struct {
+    uint8_t tag;
+
+    union {
+        struct {
+            uint16_t name_index;
+        } class_info;
+
+        struct {
+            uint16_t string_index;
+        } string_info;
+
+        struct {
+            uint16_t name_index;
+            uint16_t descriptor_index;
+        } name_type;
+
+        struct {
+            uint32_t bytes;
+        } integer_info;
+
+        struct {
+            uint16_t class_index;
+            uint16_t name_and_type_index;
+        } reference_info;
+
+        struct {
+            uint16_t length;
+            char* bytes;
+        } utf8_info;
+    };
+} constant_pool_entry_t;
+
+typedef struct {
+    uint32_t magic; // 0xCAFEBABE
+    uint16_t minor_version;
+    uint16_t major_version;
+
+    uint16_t constant_pool_count;
+    constant_pool_entry_t* constant_pool;
+
+    uint16_t access_flags;
+    uint16_t this_class;
+    uint16_t super_class;
+
+    // uint16_t interfaces_count;
+    // uint16_t* interfaces;
+
+    // uint16_t fields_count;
+    // field_info_t* fields;
+
+    // uint16_t methods_count;
+    // method_info_t* methods;
+
+    // uint16_t attributes_count;
+    // attribute_info_t* attributes;
+} class_data_t;
+
+class_data_t* create_class_file(const char* file_path);
 
 #endif // CLASS_FILE_H

@@ -11,10 +11,12 @@ int main(int argc, char** argv) {
     }
 
     if (argv[1]) {
-        class_file_t* class_file = create_class_file(argv[1]);
+        class_data_t* class_file = create_class_file(argv[1]);
 
-        // temp
-        free(class_file);
+        if (class_file) {
+            // temp'
+            free(class_file);
+        }
     } else {
         printf("Problem reading arguments.");
 
