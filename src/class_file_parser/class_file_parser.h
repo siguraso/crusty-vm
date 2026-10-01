@@ -8,13 +8,6 @@
 // structs to define methods and their names
 
 typedef struct {
-    char* id;
-    char* name;
-    char* descriptor;
-    char* type;
-} method_t;
-
-typedef struct {
     uint8_t tag;
 
     union {
@@ -47,6 +40,14 @@ typedef struct {
     };
 } constant_pool_entry_t;
 
+typedef struct {
+    char* name;
+    char* descriptor;
+    uint8_t* bytecode;
+    uint32_t bytecode_length;
+} method_t;
+
+// main data struct
 typedef struct {
     uint32_t magic; // 0xCAFEBABE
     uint16_t minor_version;
