@@ -10,12 +10,13 @@ int main(int argc, char** argv) {
         return 1;
     }
 
-    if (argv[1]) {
-        class_data_t* class_file = read_class_file(argv[1]);
+    class_data_t* class_file = NULL;
 
-        if (class_file) {
-            // temp'
-            free(class_file);
+    if (argv[1]) {
+        class_file = read_class_file(argv[1]);
+
+        if (!class_file) {
+            return 2;
         }
     } else {
         printf("Problem reading arguments.");
@@ -23,5 +24,6 @@ int main(int argc, char** argv) {
         return 3;
     }
 
+    free(class_file);
     return 0;
 }

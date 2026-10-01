@@ -14,7 +14,7 @@ configure_file(
 
 set(SOURCES
     src/main.c
-    src/class_file/class_file.c
+    src/class_file_parser/class_file_parser.c
 )
 
 add_executable(crusty-vm ${SOURCES})
