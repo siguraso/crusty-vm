@@ -41,6 +41,12 @@ typedef struct {
 } constant_pool_entry_t;
 
 typedef struct {
+    uint16_t name_index;
+    uint32_t length;
+    uint8_t* info;
+} attribute_info_t;
+
+typedef struct {
     uint16_t access_flags;
     uint16_t name_index;
     uint16_t descriptor_index;
@@ -48,12 +54,6 @@ typedef struct {
     uint16_t attributes_count;
     attribute_info_t* attributes;
 } method_info_t;
-
-typedef struct {
-    uint16_t name_index;
-    uint32_t length;
-    uint8_t* info;
-} attribute_info_t;
 
 typedef struct {
     uint16_t access_flags;
