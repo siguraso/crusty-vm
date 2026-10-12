@@ -25,7 +25,7 @@ int main(int argc, char** argv) {
         return 3;
     }
 
-    locate_main(class_file);
+    start(class_file, locate_main(class_file));
 
     free_class_data(class_file);
 

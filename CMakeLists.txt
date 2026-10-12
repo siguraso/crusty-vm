@@ -16,6 +16,7 @@ set(SOURCES
     src/main.c
     src/class_file_parser/class_file_parser.c
     src/instructions/start.c
+    src/utils/utils.c
 )
 
 add_executable(crusty-vm ${SOURCES})
