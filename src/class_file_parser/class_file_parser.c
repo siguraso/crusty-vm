@@ -77,7 +77,7 @@ int read_constant_pool_entries(constant_pool_entry_t* constant_pool_entries,
 
             if (!constant_pool_entries[index].utf8_info.bytes) {
                 printf("Memory allocation failed for Utf8 bytes.\n");
-                return 1;
+                return 0;
             }
 
             for (uint16_t byte = 0; byte < length; byte++) {
@@ -95,7 +95,7 @@ int read_constant_pool_entries(constant_pool_entry_t* constant_pool_entries,
         }
     }
 
-    return 0;
+    return 1;
 }
 
 uint16_t* read_interfaces(const uint8_t* buffer, size_t* offset,
@@ -338,6 +338,7 @@ class_data_t* read_class_file(const char* file_path) {
     uint16_t minor_version = read_u2(buffer, &offset);
     uint16_t major_version = read_u2(buffer, &offset);
     uint16_t constant_pool_count = read_u2(buffer, &offset);
+    
 
     constant_pool_entry_t* constant_pool_entries =
         malloc(sizeof(constant_pool_entry_t) * constant_pool_count);
@@ -348,6 +349,7 @@ class_data_t* read_class_file(const char* file_path) {
         free(buffer);
         return NULL;
     }
+
 
     uint16_t access_flags = read_u2(buffer, &offset);
     uint16_t this_class = read_u2(buffer, &offset);
@@ -372,6 +374,7 @@ class_data_t* read_class_file(const char* file_path) {
         return NULL;
     }
 
+
     uint16_t method_count = read_u2(buffer, &offset);
     method_info_t* method_info =
         read_method_info(buffer, &offset, method_count);
@@ -389,6 +392,7 @@ class_data_t* read_class_file(const char* file_path) {
 
         return NULL;
     }
+
 
     uint16_t attributes_count = read_u2(buffer, &offset);
     attribute_info_t* attributes =
@@ -428,6 +432,7 @@ class_data_t* read_class_file(const char* file_path) {
     class_file->methods = method_info;
     class_file->attributes_count = attributes_count;
     class_file->attributes = attributes;
+
 
     return class_file;
 }

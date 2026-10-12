@@ -1,6 +1,7 @@
 #include "class_file_parser/class_file_parser.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include "instructions/start.h"
 
 int main(int argc, char** argv) {
     if (argc != 2) {
@@ -23,6 +24,8 @@ int main(int argc, char** argv) {
 
         return 3;
     }
+
+    locate_main(class_file);
 
     free_class_data(class_file);
 
