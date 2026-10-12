@@ -24,6 +24,7 @@ int main(int argc, char** argv) {
         return 3;
     }
 
-    free(class_file);
+    free_class_data(class_file);
+
     return 0;
 }

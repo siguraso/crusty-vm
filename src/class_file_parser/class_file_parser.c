@@ -93,42 +93,45 @@ int read_constant_pool_entries(constant_pool_entry_t* constant_pool_entries,
     return 1;
 }
 
-uint16_t* read_interfaces(const uint8_t* buffer, size_t* offset, uint16_t interface_count) {
-    uint16_t* interfaces = malloc(interface_count *sizeof(uint16_t));
-    
+uint16_t* read_interfaces(const uint8_t* buffer, size_t* offset,
+                          uint16_t interface_count) {
+    uint16_t* interfaces = malloc(interface_count * sizeof(uint16_t));
+
     for (int i = 0; i < interface_count; i++) {
         interfaces[i] = read_u2(buffer, offset);
     }
 
     return interfaces;
-} 
+}
 
-field_info_t* read_field_info(const uint8_t* buffer, size_t* offset, uint16_t field_count) {
+field_info_t* read_field_info(const uint8_t* buffer, size_t* offset,
+                              uint16_t field_count) {
     field_info_t* fields = malloc(sizeof(field_info_t) * field_count);
 
-   for (uint16_t index = 0; index < field_count; index++) {
+    for (uint16_t index = 0; index < field_count; index++) {
         fields[index].access_flags = read_u2(buffer, offset);
         fields[index].name_index = read_u2(buffer, offset);
         fields[index].descriptor_index = read_u2(buffer, offset);
         fields[index].attributes_count = read_u2(buffer, offset);
 
-
         if (fields[index].attributes_count > 0) {
-            fields[index].attributes = malloc(sizeof(attribute_info_t)* (fields[index].attributes_count));
-            // haha jindex 
-            for (uint16_t jindex = 0; jindex < fields[index].attributes_count; jindex++) {
-                attribute_info_t* current = &fields[index].attributes[jindex]; 
+            fields[index].attributes = malloc(sizeof(attribute_info_t) *
+                                              (fields[index].attributes_count));
+            // haha jindex
+            for (uint16_t jindex = 0; jindex < fields[index].attributes_count;
+                 jindex++) {
+                attribute_info_t* current = &fields[index].attributes[jindex];
 
                 current->name_index = read_u2(buffer, offset);
                 current->length = read_u4(buffer, offset);
 
-                
                 if (current->length > 0) {
-                
-                    current->info = malloc(sizeof(uint8_t)*current->length);
+
+                    current->info = malloc(sizeof(uint8_t) * current->length);
                     // haha kindex
-                    for (uint32_t kindex = 0; kindex < current->length; kindex++) {
-                        current->info[kindex] = read_u1(buffer, offset); 
+                    for (uint32_t kindex = 0; kindex < current->length;
+                         kindex++) {
+                        current->info[kindex] = read_u1(buffer, offset);
                     }
                 } else {
                     current->info = NULL;
@@ -140,6 +143,43 @@ field_info_t* read_field_info(const uint8_t* buffer, size_t* offset, uint16_t fi
     }
 
     return fields;
+}
+
+method_info_t* read_method_info(const uint8_t* buffer, size_t* offset,
+                                uint16_t method_count) {
+
+    method_info_t* method_info = malloc(sizeof(method_info) * method_count);
+
+    for (size_t index = 0; index < method_count; index++) {
+        method_info[index].access_flags = read_u2(buffer, offset);
+        method_info[index].name_index = read_u2(buffer, offset);
+        method_info[index].descriptor_index = read_u2(buffer, offset);
+
+        uint16_t attributes_count = read_u2(buffer, offset);
+        method_info[index].attributes_count = attributes_count;
+
+        attribute_info_t* attributes =
+            malloc(sizeof(attribute_info_t) * attributes_count);
+
+        for (size_t jindex = 0; jindex < attributes_count; jindex++) {
+            attributes[jindex].name_index = read_u2(buffer, offset);
+
+            uint32_t info_length = read_u4(buffer, offset);
+            attributes[jindex].length = info_length;
+
+            uint8_t* info = malloc(sizeof(uint8_t) * info_length);
+
+            for (size_t kindex = 0; kindex < info_length; kindex++) {
+                info[kindex] = read_u1(buffer, offset);
+            }
+
+            attributes[jindex].info = info;
+        }
+
+        method_info[index].attributes = attributes;
+    }
+
+    return method_info;
 }
 
 class_data_t* read_class_file(const char* file_path) {
@@ -177,7 +217,6 @@ class_data_t* read_class_file(const char* file_path) {
     uint16_t major_version = read_u2(buffer, &offset);
     uint16_t constant_pool_count = read_u2(buffer, &offset);
 
-    // fins constant pool
     constant_pool_entry_t* constant_pool_entries =
         malloc(sizeof(constant_pool_entry_t) * constant_pool_count);
 
@@ -194,9 +233,40 @@ class_data_t* read_class_file(const char* file_path) {
     uint16_t interface_count = read_u2(buffer, &offset);
 
     uint16_t* interfaces = read_interfaces(buffer, &offset, interface_count);
-    
+
     uint16_t fields_count = read_u2(buffer, &offset);
     field_info_t* field_info = read_field_info(buffer, &offset, fields_count);
+
+    if (!field_info) {
+        for (uint16_t index = 0; index < fields_count; index++) {
+            for (uint16_t jindex = 0;
+                 jindex < field_info[index].attributes_count; jindex++) {
+                free(field_info[index].attributes[jindex].info);
+            }
+            free(field_info[index].attributes);
+        }
+        free(field_info);
+
+        return NULL;
+    }
+
+    uint16_t method_count = read_u2(buffer, &offset);
+    method_info_t* method_info =
+        read_method_info(buffer, &offset, method_count);
+
+    if (!method_info) {
+        for (uint16_t index = 0; index < method_count; index++) {
+            for (uint16_t jindex = 0;
+                 jindex < method_info[index].attributes_count; jindex++) {
+                free(method_info[index].attributes[jindex].info);
+            }
+            free(method_info[index].attributes);
+        }
+
+        free(method_info);
+
+        return NULL;
+    }
 
     free(buffer);
 
@@ -214,6 +284,9 @@ class_data_t* read_class_file(const char* file_path) {
     class_file->interfaces = interfaces;
     class_file->fields_count = fields_count;
     class_file->fields = field_info;
+    class_file->methods_count = method_count;
+    class_file->methods = method_info;
+
     // debug print
     printf("Class file created successfully:\n");
     printf("Magic: 0x%X\n", class_file->magic);
@@ -262,4 +335,47 @@ class_data_t* read_class_file(const char* file_path) {
     }
 
     return class_file;
+}
+
+int free_class_data(class_data_t* class_file) {
+    if (!class_file) {
+        return 1;
+    }
+
+    for (uint16_t index = 1; index < class_file->constant_pool_count; index++) {
+        constant_pool_entry_t* entry = &class_file->constant_pool[index];
+
+        if (entry->tag == 1) { // Utf8
+            free(entry->utf8_info.bytes);
+        }
+    }
+    free(class_file->constant_pool);
+    free(class_file->interfaces);
+
+    // Free fields
+    for (uint16_t index = 0; index < class_file->fields_count; index++) {
+        field_info_t* field = &class_file->fields[index];
+
+        for (uint16_t jindex = 0; jindex < field->attributes_count; jindex++) {
+            attribute_info_t* attribute = &field->attributes[jindex];
+            free(attribute->info);
+        }
+        free(field->attributes);
+    }
+    free(class_file->fields);
+
+    for (uint16_t index = 0; index < class_file->methods_count; index++) {
+        method_info_t* method = &class_file->methods[index];
+
+        for (uint16_t jindex = 0; jindex < method->attributes_count; jindex++) {
+            attribute_info_t* attribute = &method->attributes[jindex];
+            free(attribute->info);
+        }
+        free(method->attributes);
+    }
+    free(class_file->methods);
+
+    free(class_file);
+
+    return 0;
 }

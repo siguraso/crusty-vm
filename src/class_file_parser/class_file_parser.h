@@ -40,8 +40,6 @@ typedef struct {
     };
 } constant_pool_entry_t;
 
-
-
 // typedef struct {
 //     char* name;
 //     char* descriptor;
@@ -49,14 +47,14 @@ typedef struct {
 //     uint32_t bytecode_length;
 // } method_t;
 
-// typedef struct {
-//     uint16_t access_flags;
-//     uint16_t name_index;
-//     uint16_t descriptor_index;
+typedef struct {
+    uint16_t access_flags;
+    uint16_t name_index;
+    uint16_t descriptor_index;
 
-//     uint16_t attributes_count;
-//     attribute_info_t* attributes;
-// } method_info_t;
+    uint16_t attributes_count;
+    attribute_info_t* attributes;
+} method_info_t;
 
 typedef struct {
     uint16_t name_index;
@@ -70,7 +68,7 @@ typedef struct {
     uint16_t descriptor_index;
     uint16_t attributes_count;
     attribute_info_t* attributes;
-    
+
 } field_info_t;
 
 // main data struct
@@ -92,13 +90,14 @@ typedef struct {
     uint16_t fields_count;
     field_info_t* fields;
 
-    // uint16_t methods_count;
-    // method_info_t* methods;
+    uint16_t methods_count;
+    method_info_t* methods;
 
     // uint16_t attributes_count;
     // attribute_info_t* attributes;
 } class_data_t;
 
 class_data_t* read_class_file(const char* file_path);
+int free_class_data(class_data_t* class_file);
 
 #endif // CLASS_FILE_PARSER_H
