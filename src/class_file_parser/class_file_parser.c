@@ -182,6 +182,31 @@ method_info_t* read_method_info(const uint8_t* buffer, size_t* offset,
     return method_info;
 }
 
+attribute_info_t* read_attribute_info(const uint8_t* buffer, size_t* offset,
+                                      uint16_t attribute_count) {
+    attribute_info_t* attributes =
+        malloc(sizeof(attribute_info_t) * attribute_count);
+
+    for (uint16_t index = 0; index < attribute_count; index++) {
+        attributes[index].name_index = read_u2(buffer, offset);
+        attributes[index].length = read_u4(buffer, offset);
+
+        if (attributes[index].length > 0) {
+            attributes[index].info =
+                malloc(sizeof(uint8_t) * attributes[index].length);
+
+            for (uint32_t jindex = 0; jindex < attributes[index].length;
+                 jindex++) {
+                attributes[index].info[jindex] = read_u1(buffer, offset);
+            }
+        } else {
+            attributes[index].info = NULL;
+        }
+    }
+
+    return attributes;
+}
+
 class_data_t* read_class_file(const char* file_path) {
     FILE* file_stream = fopen(file_path, "rb");
 
@@ -264,6 +289,19 @@ class_data_t* read_class_file(const char* file_path) {
         }
 
         free(method_info);
+
+        return NULL;
+    }
+
+    uint16_t attributes_count = read_u2(buffer, &offset);
+    attribute_info_t* attributes =
+        read_attribute_info(buffer, &offset, attributes_count);
+
+    if (!attributes) {
+        for (uint16_t index = 0; index < attributes_count; index++) {
+            free(attributes[index].info);
+        }
+        free(attributes);
 
         return NULL;
     }
@@ -374,6 +412,12 @@ int free_class_data(class_data_t* class_file) {
         free(method->attributes);
     }
     free(class_file->methods);
+
+    for (uint16_t index = 0; index < class_file->attributes_count; index++) {
+        attribute_info_t* attribute = &class_file->attributes[index];
+        free(attribute->info);
+    }
+    free(class_file->attributes);
 
     free(class_file);
 
