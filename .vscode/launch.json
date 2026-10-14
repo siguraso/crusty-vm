@@ -2,6 +2,13 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "type": "java",
+      "name": "example",
+      "request": "launch",
+      "mainClass": "example",
+      "projectName": "crusty-vm_5555aa64"
+    },
+    {
       "name": "Run cava-sunday-vm",
       "type": "cppdbg",
       "request": "launch",
