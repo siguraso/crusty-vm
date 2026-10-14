@@ -1,4 +1,4 @@
-#pragma once
+
 
 #ifndef START_H
 #define START_H
@@ -9,7 +9,7 @@
 typedef struct {
     uint16_t max_stack;
     uint16_t max_locals;
-    
+
     uint32_t code_length;
     uint8_t* code;
 

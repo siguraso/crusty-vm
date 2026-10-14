@@ -1,4 +1,4 @@
-#pragma once
+
 
 #ifndef CLASS_FILE_PARSER_H
 #define CLASS_FILE_PARSER_H
