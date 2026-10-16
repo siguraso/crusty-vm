@@ -1,5 +1,5 @@
 #include "start.h"
-#include "../utils/utils.h"
+#include "opcodes.h"
 #include <stdio.h>
 #include <string.h>
 
@@ -74,6 +74,8 @@ int start(class_data_t* class_data, method_info_t* entry_point) {
         return 1;
     }
 
+    cvm_stack_t stack = {0};
+
     attribute_info_t* attributes = entry_point->attributes;
 
     for (uint16_t i = 0; i < entry_point->attributes_count; i++) {
@@ -83,8 +85,13 @@ int start(class_data_t* class_data, method_info_t* entry_point) {
         if (attribute_name != NULL && strcmp(attribute_name, "Code") == 0) {
             code_attribute_t* code_attr = parse_code_attribute(curr.info);
 
-            for (uint32_t j = 0; j < code_attr->code_length; j++) {
-                printf("%x ", code_attr->code[j]);
+            for (size_t j = 0; j < code_attr->code_length; j++) {
+                printf("0x%02X ", code_attr->code[j]);
+            }
+
+            for (size_t j = 0; j < code_attr->code_length;) {
+                parse_opcodes(code_attr->code[j], class_data, code_attr, &j,
+                              &stack);
             }
 
             free(code_attr->code);

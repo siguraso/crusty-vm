@@ -306,19 +306,15 @@ class_data_t* read_class_file(const char* file_path) {
 
     uint32_t magic = read_u4(buffer, &offset);
 
-    if (buffer[0] == 0xCA && buffer[1] == 0xFE && buffer[2] == 0xBA &&
-        buffer[3] == 0xBE) {
-        printf("found cafebabe :3\n");
-    } else {
+    if (!(buffer[0] == 0xCA && buffer[1] == 0xFE && buffer[2] == 0xBA &&
+          buffer[3] == 0xBE)) {
         printf("not a valid class file :(\n");
-
         return NULL;
     }
 
     uint16_t minor_version = read_u2(buffer, &offset);
     uint16_t major_version = read_u2(buffer, &offset);
     uint16_t constant_pool_count = read_u2(buffer, &offset);
-    
 
     constant_pool_entry_t* constant_pool_entries =
         malloc(sizeof(constant_pool_entry_t) * constant_pool_count);
@@ -329,7 +325,6 @@ class_data_t* read_class_file(const char* file_path) {
         free(buffer);
         return NULL;
     }
-
 
     uint16_t access_flags = read_u2(buffer, &offset);
     uint16_t this_class = read_u2(buffer, &offset);
@@ -354,7 +349,6 @@ class_data_t* read_class_file(const char* file_path) {
         return NULL;
     }
 
-
     uint16_t method_count = read_u2(buffer, &offset);
     method_info_t* method_info =
         read_method_info(buffer, &offset, method_count);
@@ -372,7 +366,6 @@ class_data_t* read_class_file(const char* file_path) {
 
         return NULL;
     }
-
 
     uint16_t attributes_count = read_u2(buffer, &offset);
     attribute_info_t* attributes =
@@ -412,7 +405,6 @@ class_data_t* read_class_file(const char* file_path) {
     class_file->methods = method_info;
     class_file->attributes_count = attributes_count;
     class_file->attributes = attributes;
-
 
     return class_file;
 }
